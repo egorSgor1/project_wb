@@ -3,6 +3,7 @@ import argparse
 import torch
 from PIL import Image
 from transformers import ViTImageProcessor, ViTForImageClassification
+from typing import Union, List
 
 
 class ViT:
@@ -22,13 +23,13 @@ class ViT:
         warnings.filterwarnings('default')
         self.soft_max = torch.nn.functional.softmax
 
-    def predict(self, image: Image.Image) -> torch.Tensor:
+    def predict(self, img: Union[Image.Image, List[Image.Image]]) -> torch.Tensor:
         """
-        Метод предсказывает вероятности классов переданного изображения
-        :param image: Изображение для классификации
-        :return: torch.Tensor с вероятностями 0-го и 1-го классов соответственно
+        Метод предсказывает вероятности классов для переданного изображения / массива изображений
+        :param img: Изображение для классификации / Массив таких изображений
+        :return: Tensor с вероятностями 0-го и 1-го классов соответственно для каждого изображения
         """
-        feature = self.feature_extractor(image, return_tensors='pt').to(self.device)
+        feature = self.feature_extractor(img, return_tensors='pt').to(self.device)
         with torch.no_grad():
             res = self.model(**feature).logits
         probabilities = self.soft_max(res, dim=1)
