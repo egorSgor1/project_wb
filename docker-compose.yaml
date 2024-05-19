@@ -1,0 +1,5 @@
+services:
+  app:
+    image: egornov/project_wb:latest
+    ports:
+      - "8080:8080"
